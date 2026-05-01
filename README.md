@@ -15,6 +15,7 @@ Minuman bersifat **self-service** tanpa antrean. Pelanggan di kasir memilih antr
 Kendala Operasional:
 1. Kasir harus **minimal 2 dan maksimal 3 orang.**
 2. Harus ada **minimal 1 pekerja di setiap stasiun makanan panas dan sandwich spesial.**
+  
 <p align="center">
 <img width="476" height="491" alt="image" src="https://github.com/user-attachments/assets/f8f1bf4f-deab-49e2-b6d8-83be0239510a" />
 The Ball State University (BSU) Cafetaria
