@@ -6,12 +6,13 @@ Setiap pelanggan memilih salah satu dari tiga rute berikut:
 1. **Hot food → Drinks→ Cashiers** (80%)
 2. **Specialty Sandwiches → Drinks → Cashiers** (15%)
 3. **Drinks → Cashiers** (5%)
+
 Minuman bersifat **self-service** tanpa antrean. Pelanggan di kasir memilih antrean terpendek dan tidak berpindah antrean (FIFO).
 
 Kendala Operasional:
 1. Kasir harus **minimal 2 dan maksimal 3 orang.**
 2. Harus ada **minimal 1 pekerja di setiap stasiun makanan panas dan sandwich spesial.**
-<img width="476" height="491" alt="image" src="https://github.com/user-attachments/assets/f8f1bf4f-deab-49e2-b6d8-83be0239510a" />
 <p align="center">
+<img width="476" height="491" alt="image" src="https://github.com/user-attachments/assets/f8f1bf4f-deab-49e2-b6d8-83be0239510a" />
 The Ball State University (BSU) Cafetaria
 </p>
