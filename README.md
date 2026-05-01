@@ -6,7 +6,8 @@ Setiap pelanggan memilih salah satu dari tiga rute berikut:
 1. **Hot food → Drinks→ Cashiers** (80%)
 2. **Specialty Sandwiches → Drinks → Cashiers** (15%)
 3. **Drinks → Cashiers** (5%)
-  
+
+<p align="justify">
 Minuman bersifat **self-service** tanpa antrean. Pelanggan di kasir memilih antrean terpendek dan tidak berpindah antrean (FIFO).
   
 Kendala Operasional:
