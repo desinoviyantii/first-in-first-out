@@ -20,10 +20,10 @@ Kendala Operasional:
 <p align="center">
 <img width="476" height="491" alt="image" src="https://github.com/user-attachments/assets/f8f1bf4f-deab-49e2-b6d8-83be0239510a" />
 The Ball State University (BSU) Cafetaria
-</p>
 
 ### **SOLVE**
 #### Seed untuk Setiap Streams
+<pre>
 ```# SEED FOR EVERY STREAMS
 # random seed untuk waktu kedatangan (stream 1)
 SEED_INTERVAL_TIME = 100
@@ -43,3 +43,21 @@ SEED_ACT_HOT_FOOD = 700
 SEED_ACT_SANDWICH = 800
 # random seed untuk akumulasi waktu kasir hotfood (stream 9)
 SEED_ACT_DRINKS = 900```
+</pre>
+
+#### **Contoh Kemungkinan Penempatan 4 Pelayan**
+<pre>
+```# Parameter Configuration
+NUM_HOT_FOOD_EMPLOYEE = 1  # jumlah pelayan hotfood
+NUM_SANDWICH_EMPLOYEE = 1  # jumlah pelayan sandwich
+NUM_CASHIER = 2  # jumlah kasir
+
+# Parameter Duration
+SIMULATION_DURATION = 5400  # #waktu simulasi (detik)
+# waktu antar kedatangan ukuran grup menyebar eksponensial dengan rata-rata 30 detik
+INTERVAL_CUSTOMER_ARRIVAL = 30```
+</pre>
+
+</p>
+
+
