@@ -22,40 +22,92 @@ Kendala Operasional:
 The Ball State University (BSU) Cafetaria
 
 ### **SOLVE**
-#### Seed untuk Setiap Streams
+#### Proses Pelanggan
 <pre>
-```# SEED FOR EVERY STREAMS
-# random seed untuk waktu kedatangan (stream 1)
-SEED_INTERVAL_TIME = 100
-# random seed untuk ukuran grup (stream 2)
-SEED_GROUP_SIZE = 200
-# random seed untuk pemilihan rute (stream 3)
-SEED_ROUTE_CHOICE = 300
-# random seed untuk waktu pelayanan hotfood (stream 4)
-SEED_ST_HOT_FOOD = 400
-# random seed untuk waktu pelayanan sandwich (stream 5)
-SEED_ST_SANDWICH = 500
-# random seed untuk waktu pelayanan drinks (stream 6)
-SEED_ST_DRINKS = 600
-# random seed untuk akumulasi waktu kasir hotfood (stream 7)
-SEED_ACT_HOT_FOOD = 700
-# random seed untuk akumulasi waktu kasir sandwich (stream 8)
-SEED_ACT_SANDWICH = 800
-# random seed untuk akumulasi waktu kasir hotfood (stream 9)
-SEED_ACT_DRINKS = 900```
+def process_customer(env, lengths_queue, customer, hot_food, sandwich, drink, cashier):
+    if customer.route == 1:
+        yield env.process(cs(env, lengths_queue, customer, 'hot-food', hot_food))
+        yield env.process(cs(env, lengths_queue, customer, 'drink', drink))
+        yield env.process(cs(env, lengths_queue, customer, 'cashier', cashier))
+    elif customer.route == 2:
+        yield env.process(cs(env, lengths_queue, customer, 'sandwich', sandwich))
+        yield env.process(cs(env, lengths_queue, customer, 'drink', drink))
+        yield env.process(cs(env, lengths_queue, customer, 'cashier', cashier))
+    elif customer.route == 3:
+        yield env.process(cs(env, lengths_queue, customer, 'drink', drink))
+        yield env.process(cs(env, lengths_queue, customer, 'cashier', cashier))
 </pre>
 
-#### **Contoh Kemungkinan Penempatan 4 Pelayan**
+#### **Pemilihan rute yang dipilih oleh pelanggan**
 <pre>
-```# Parameter Configuration
-NUM_HOT_FOOD_EMPLOYEE = 1  # jumlah pelayan hotfood
-NUM_SANDWICH_EMPLOYEE = 1  # jumlah pelayan sandwich
-NUM_CASHIER = 2  # jumlah kasir
+def cs(env, lengths_queue, customer, station_name, station):
+    ## FOR DRINK ##
+    if station_name == 'drink':
+        print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} DILAYANI di stasiun {station_name} pada waktu {env.now:.2f}')
 
-# Parameter Duration
-SIMULATION_DURATION = 5400  # #waktu simulasi (detik)
-# waktu antar kedatangan ukuran grup menyebar eksponensial dengan rata-rata 30 detik
-INTERVAL_CUSTOMER_ARRIVAL = 30```
+        yield env.process(station.service(customer))
+        print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} MENINGGALKAN {station_name} pada waktu {env.now:.2f}')
+        return
+
+    print(f"Pelanggan {customer.customer_id} dari group size {customer.group_size} Mulai MENGANTRI di Station {station_name} pada {env.now:.2f}.")
+
+    ## FOR CASHIER ##
+    if station_name == 'cashier':
+        index_shortest_queue = station.find_shortest_queue()
+        with station.queues[index_shortest_queue].request() as request:
+            customer.cashier_enter_time = env.now
+
+            if len(station.queues[index_shortest_queue].queue) not in lengths_queue["cashiers"]:
+                lengths_queue["cashiers"][len(station.queues[index_shortest_queue].queue)
+                                          ] = customer.cashier_enter_time - station.queue_change_time
+            else:
+                lengths_queue["cashiers"][len(station.queues[index_shortest_queue].queue)
+                                          ] += customer.cashier_enter_time - station.queue_change_time
+
+            # Waktu perubahan customer masuk antrian
+            station.queue_change_time = env.now
+            yield request
+            print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} DILAYANI di {station_name} pada waktu {env.now:.2f}')
+
+            yield env.process(station.service(customer, lengths_queue, index_shortest_queue))
+            print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} MENINGGALKAN {station_name} pada waktu {env.now:.2f}')
+            return
+
+     ## FOR HOT FOOD & SANDWICH ##
+    with station.queue.request() as request:
+
+        # SET STATION ENTER QUEUE TIME
+        if station_name == 'hot-food':
+            customer.hot_food_enter_time = env.now
+            print(f"MASUK ANTRIAN HOT-FOOD: {len(station.queue.queue)}")
+
+            if len(station.queue.queue) not in lengths_queue["hot-food"]:
+                lengths_queue["hot-food"][len(station.queue.queue)
+                                          ] = customer.hot_food_enter_time - station.queue_change_time
+            else:
+                lengths_queue["hot-food"][len(station.queue.queue)
+                                          ] += customer.hot_food_enter_time - station.queue_change_time
+
+        elif station_name == 'sandwich':
+            customer.specialty_sandwich_enter_time = env.now
+
+            if len(station.queue.queue) not in lengths_queue["sandwich"]:
+                lengths_queue["sandwich"][len(station.queue.queue)
+                                          ] = customer.specialty_sandwich_enter_time - station.queue_change_time
+            else:
+                lengths_queue["sandwich"][len(station.queue.queue)
+                                          ] += customer.specialty_sandwich_enter_time - station.queue_change_time
+
+        # Waktu perubahan customer masuk antrian
+        station.queue_change_time = env.now
+
+        yield request
+        # req aja kaya membuka gitu
+        print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} DILAYANI di stasiun {station_name} pada waktu {env.now:.2f}')
+
+        yield env.process(station.service(customer, lengths_queue))
+
+        print(f'Pelanggan {customer.customer_id} dari group size {customer.group_size} MENINGGALKAN {station_name} pada waktu {env.now:.2f}')
 </pre>
 
 </p>
